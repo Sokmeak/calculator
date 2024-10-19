@@ -19,16 +19,23 @@
         </tr>
         <tr>
           <td>
-            <button type="button" class="btn btn-warning">MC</button>
+            <!-- <button type="button" class="btn btn-warning">MC</button> -->
+
+            <MyButton color="btn-warning" :label="'MC'"></MyButton>
           </td>
           <td>
-            <button type="button" class="btn btn-warning">MR</button>
+            <!-- <button type="button" class="btn btn-warning">MR</button> -->
+
+            <MyButton color="btn-warning" :label="'MR'"></MyButton>
           </td>
           <td>
-            <button type="button" class="btn btn-warning">M-</button>
+            <!-- <button type="button" class="btn btn-warning">M-</button> -->
+            <MyButton color="btn-warning" :label="'M-'"></MyButton>
           </td>
           <td>
-            <button type="button" class="btn btn-warning">M+</button>
+            <!-- <button type="button" class="btn btn-warning">M+</button> -->
+
+            <MyButton color="btn-warning" :label="'M+'"></MyButton>
           </td>
           <td>
             <button type="button" class="btn btn-light">
@@ -38,70 +45,95 @@
         </tr>
         <tr>
           <td>
-            <button type="button" class="btn btn-light">7</button>
+            <MyButton @click="showNumber(7)" :label="7"></MyButton>
           </td>
           <td>
-            <button type="button" class="btn btn-light">8</button>
+            <MyButton @click="showNumber(8)" :label="8"></MyButton>
           </td>
           <td>
-            <button type="button" class="btn btn-light">9</button>
+            <MyButton @click="showNumber(9)" :label="9"></MyButton>
           </td>
           <td>
-            <button type="button" class="btn btn-secondary">÷</button>
+            <MyButton
+              @click="setOperate('/')"
+              color="btn-secondary"
+              :label="'÷'"></MyButton>
           </td>
           <td>
-            <button type="button" class="btn btn-light">+/-</button>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <button type="button" class="btn btn-light">4</button>
-          </td>
-          <td>
-            <button type="button" class="btn btn-light">5</button>
-          </td>
-          <td>
-            <button type="button" class="btn btn-light">6</button>
-          </td>
-          <td>
-            <button type="button" class="btn btn-secondary">x</button>
-          </td>
-          <td>
-            <button type="button" class="btn btn-secondary">-</button>
+            <!-- <button type="button" class="btn btn-light">+/-</button> -->
+            <MyButton @click="toggleSign" :label="'+/-'"></MyButton>
           </td>
         </tr>
         <tr>
           <td>
-            <button
+            <MyButton @click="showNumber(4)" :label="4"></MyButton>
+          </td>
+          <td>
+            <MyButton @click="showNumber(5)" :label="5"></MyButton>
+          </td>
+          <td>
+            <MyButton @click="showNumber(6)" :label="6"></MyButton>
+          </td>
+          <td>
+            <!-- <button type="button" class="btn btn-secondary">x</button> -->
+            <MyButton
+              @click="setOperate('*')"
+              color="btn-secondary"
+              :label="'x'"></MyButton>
+          </td>
+          <td>
+            <!-- <button type="button" class="btn btn-secondary">-</button> -->
+            <MyButton
+              color="btn-secondary"
+              @click="setOperate('-')"
+              :label="'-'"></MyButton>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <!-- <button
               v-on:click="showNumber(1)"
               type="button"
               class="btn btn-light"
             >
               1
-            </button>
+            </button> -->
+
+            <MyButton @click="showNumber(1)" :label="1"></MyButton>
           </td>
           <td>
-            <button type="button" class="btn btn-light">2</button>
+            <MyButton @click="showNumber(2)" :label="2"></MyButton>
           </td>
           <td>
-            <button type="button" class="btn btn-light">3</button>
+            <MyButton @click="showNumber(3)" :label="3"></MyButton>
           </td>
           <td rowspan="2">
-            <button type="button" class="btn btn-secondary long-btn">+</button>
+            <!-- <button type="button" class="btn btn-secondary long-btn">+</button> -->
+            <MyButton
+              color="btn-secondary"
+              class="long-btn"
+              @click="setOperate('+')"
+              :label="'+'"></MyButton>
           </td>
           <td rowspan="2">
-            <button type="button" class="btn btn-primary long-btn">=</button>
+            <!-- <button type="button" class="btn btn-primary long-btn">=</button> -->
+
+            <MyButton
+              color="btn-primary"
+              class="long-btn"
+              @click="calculate"
+              :label="'='"></MyButton>
           </td>
         </tr>
         <tr>
           <td>
-            <button type="button" class="btn btn-danger">C</button>
+            <MyButton @click="clear" color="btn-danger" :label="'C'"></MyButton>
           </td>
           <td>
-            <button type="button" class="btn btn-light">0</button>
+            <MyButton @click="showNumber(0)" :label="0"></MyButton>
           </td>
           <td>
-            <button type="button" class="btn btn-light">.</button>
+            <MyButton @click="inputDecimal" :label="'.'"></MyButton>
           </td>
         </tr>
       </table>
@@ -113,20 +145,68 @@
 </template>
 
 <script>
+import MyButton from "./components/MyButton.vue";
 export default {
-  name: 'App',
-  components: {},
+  name: "App",
+  components: {
+    MyButton,
+  },
   data() {
     return {
       // This is the private data section which can be used inside this component
-      inputNumber: 0,
+      inputNumber: "",
+      temp: "",
+      operator: null,
     };
   },
   methods: {
     showNumber(number) {
       // Assign number when user click to the inputNumber data
       // To access private data from methods, use (this.)
-      this.inputNumber = number;
+      // append the number
+      this.inputNumber = this.inputNumber.toString() + number.toString();
+      console.log(this.inputNumber);
+    },
+    inputDecimal() {
+      if (!this.inputNumber.includes(".")) {
+        if (this.inputNumber === "") {
+          this.inputNumber += "0.";
+        } else {
+          this.inputNumber += ".";
+        }
+      }
+    },
+
+    setOperate(op) {
+      this.operator = op;
+      this.temp = this.inputNumber;
+      this.inputNumber = "";
+    },
+    calculate() {
+      if (this.operator && this.temp !== "") {
+        let result = eval(this.temp + this.operator + this.inputNumber);
+        this.inputNumber = result;
+        this.temp = "";
+        this.operator = null;
+      }
+    },
+    clear() {
+      this.inputNumber = "";
+      this.temp = "";
+      this.operator = null;
+    },
+    toggleSign() {
+      if (this.inputNumber) {
+        this.inputNumber = this.inputNumber.startsWith("-")
+          ? this.inputNumber.slice(1)
+          : `-${this.inputNumber}`;
+
+        // if(this.inputNumber.startsWith("-")){
+        //   this.inputNumber=this.inputNumber.slice(1);
+        // }else{
+        //   this.inputNumber ="-"+ this.inputNumber;
+        // }
+      }
     },
   },
 };
