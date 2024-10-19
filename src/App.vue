@@ -9,7 +9,7 @@
               <div id="screen_bottom">
                 <!-- v-text is a directive that is used to replace the content of HTML tag with private data -->
                 <!-- It will update the content automatically when data is changed. It is called data reactive -->
-                <span v-text="inputNumber" id="operand1">0</span>
+                <span v-text="lastInput" id="operand1">0</span>
                 <span id="operator"></span>
                 <span id="operand2"></span>
               </div>
@@ -21,24 +21,39 @@
           <td>
             <!-- <button type="button" class="btn btn-warning">MC</button> -->
 
-            <MyButton color="btn-warning" :label="'MC'"></MyButton>
+            <!-- On a calculator, "MC" clears the memory, "MR" recalls the number stored in memory, 
+             "M-" subtracts the displayed number from the memory, and "M+" adds the displayed number to the memory;
+              essentially allowing you to store and manipulate numbers during a calculation sequence -->
+            <MyButton
+              @click="clearMemory"
+              color="btn-warning"
+              :label="'MC'"></MyButton>
           </td>
           <td>
             <!-- <button type="button" class="btn btn-warning">MR</button> -->
 
-            <MyButton color="btn-warning" :label="'MR'"></MyButton>
+            <MyButton
+              @click="recallMemory"
+              color="btn-warning"
+              :label="'MR'"></MyButton>
           </td>
           <td>
             <!-- <button type="button" class="btn btn-warning">M-</button> -->
-            <MyButton color="btn-warning" :label="'M-'"></MyButton>
+            <MyButton
+              @click="substractMemory"
+              color="btn-warning"
+              :label="'M-'"></MyButton>
           </td>
           <td>
             <!-- <button type="button" class="btn btn-warning">M+</button> -->
 
-            <MyButton color="btn-warning" :label="'M+'"></MyButton>
+            <MyButton
+              @click="addMemory"
+              color="btn-warning"
+              :label="'M+'"></MyButton>
           </td>
           <td>
-            <button type="button" class="btn btn-light">
+            <button type="button" @click="deleteLast" class="btn btn-light">
               <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
             </button>
           </td>
@@ -154,59 +169,81 @@ export default {
   data() {
     return {
       // This is the private data section which can be used inside this component
-      inputNumber: "",
+      lastInput: "",
       temp: "",
       operator: null,
+      memory: 0,
     };
   },
   methods: {
     showNumber(number) {
-      // Assign number when user click to the inputNumber data
+      // Assign number when user click to the lastInput data
       // To access private data from methods, use (this.)
       // append the number
-      this.inputNumber = this.inputNumber.toString() + number.toString();
-      console.log(this.inputNumber);
+      this.lastInput = this.lastInput.toString() + number.toString();
+      console.log(this.lastInput);
     },
     inputDecimal() {
-      if (!this.inputNumber.includes(".")) {
-        if (this.inputNumber === "") {
-          this.inputNumber += "0.";
+      if (!this.lastInput.includes(".")) {
+        if (this.lastInput === "") {
+          this.lastInput += "0.";
         } else {
-          this.inputNumber += ".";
+          this.lastInput += ".";
         }
       }
     },
 
     setOperate(op) {
       this.operator = op;
-      this.temp = this.inputNumber;
-      this.inputNumber = "";
+      this.temp = this.lastInput;
+      this.lastInput = "";
     },
     calculate() {
       if (this.operator && this.temp !== "") {
-        let result = eval(this.temp + this.operator + this.inputNumber);
-        this.inputNumber = result;
+        let result = eval(this.temp + this.operator + this.lastInput);
+        this.lastInput = result;
         this.temp = "";
         this.operator = null;
       }
     },
     clear() {
-      this.inputNumber = "";
+      this.lastInput = "";
       this.temp = "";
       this.operator = null;
     },
     toggleSign() {
-      if (this.inputNumber) {
-        this.inputNumber = this.inputNumber.startsWith("-")
-          ? this.inputNumber.slice(1)
-          : `-${this.inputNumber}`;
+      if (this.lastInput) {
+        this.lastInput = this.lastInput.startsWith("-")
+          ? this.lastInput.slice(1)
+          : `-${this.lastInput}`;
 
-        // if(this.inputNumber.startsWith("-")){
-        //   this.inputNumber=this.inputNumber.slice(1);
+        // if(this.lastInput.startsWith("-")){
+        //   this.lastInput=this.lastInput.slice(1);
         // }else{
-        //   this.inputNumber ="-"+ this.inputNumber;
+        //   this.lastInput ="-"+ this.lastInput;
         // }
       }
+    },
+    deleteLast() {
+      // delete at the end
+      this.lastInput = this.lastInput.slice(0, -1);
+    },
+
+    clearMemory() {
+      this.memory = 0;
+      console.log(this.memory);
+    },
+    recallMemory() {
+      this.lastInput = this.memory.toString();
+      console.log(this.memory);
+    },
+    addMemory() {
+      this.memory += parseFloat(this.lastInput);
+      console.log(this.memory);
+    },
+    substractMemory() {
+      this.memory -= parseFloat(this.lastInput);
+      console.log(this.memory);
     },
   },
 };
