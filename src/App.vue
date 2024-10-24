@@ -5,7 +5,7 @@
         <tr>
           <td colspan="5">
             <div id="screen">
-              <span id="screen_top">M=0</span>
+              <span id="screen_top" v-text="lastMemory">M=0</span>
               <div id="screen_bottom">
                 <!-- v-text is a directive that is used to replace the content of HTML tag with private data -->
                 <!-- It will update the content automatically when data is changed. It is called data reactive -->
@@ -173,6 +173,8 @@ export default {
       temp: "",
       operator: null,
       memory: 0,
+      lastMemory :  "M = 0"
+     
     };
   },
   methods: {
@@ -193,6 +195,7 @@ export default {
       }
     },
 
+    //  update memory value
     setOperate(op) {
       this.operator = op;
       this.temp = this.lastInput;
@@ -231,18 +234,26 @@ export default {
 
     clearMemory() {
       this.memory = 0;
+    
+       this.lastMemory = "M = 0";
       console.log(this.memory);
     },
     recallMemory() {
       this.lastInput = this.memory.toString();
+      this.lastMemory = "M = "+this.memory;
       console.log(this.memory);
     },
     addMemory() {
       this.memory += parseFloat(this.lastInput);
+
+     this.lastMemory = "M = "+this.memory;
       console.log(this.memory);
     },
+
     substractMemory() {
       this.memory -= parseFloat(this.lastInput);
+
+       this.lastMemory = "M = "+this.memory;
       console.log(this.memory);
     },
   },
